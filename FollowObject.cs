@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,8 +16,11 @@ public class FollowObject : MonoBehaviour
     
     public GameObject target;
     public Vector3 offset;
+    public int roundDecimalPlaces = 2;
     
     public Camera cam;
+
+    private float roundValue;
     void Start()
     {
         // if we have not been given a camera use the main one for convenience.
@@ -24,16 +28,23 @@ public class FollowObject : MonoBehaviour
         {
             this.cam = Camera.main;
         }
+
+        roundValue = Mathf.Pow(10, roundDecimalPlaces);
     }
 
 
     void Update()
     {
         // work out where the object is on screen
-        Vector3 pos = this.cam.WorldToScreenPoint(target.transform.position);
-        
-        // set the transform of this to that plus the offset.
+        Vector3 pos = this.cam.WorldToScreenPoint(target.transform.position) + this.offset;
+        pos = new Vector3(
+            x: Mathf.Round(pos.x * roundValue) / roundValue,
+            y: Mathf.Round(pos.y * roundValue) / roundValue,
+            z: Mathf.Round(pos.z * roundValue) / roundValue
+        );
+
+            // set the transform of this to that plus the offset.
         // TODO: what happens if the object goes off screen?
-        this.transform.position = pos + this.offset;
+        this.transform.position = pos;
     }
 }
